@@ -10,9 +10,8 @@
 
 
 /* eslint-disable @typescript-eslint/no-var-requires */
-
-
 const { configure } = require('quasar/wrappers');
+// const envparser = require('./config/envparser');
 
 module.exports = configure(function (ctx) {
   return {
@@ -35,6 +34,7 @@ module.exports = configure(function (ctx) {
     boot: [
       'i18n',
       'axios',
+      'supabase',
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
@@ -62,6 +62,7 @@ module.exports = configure(function (ctx) {
 
       // transpile: false,
       // publicPath: '/',
+      // env: envparser()
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).

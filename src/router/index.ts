@@ -6,6 +6,7 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
+import useAuthUser from 'src/composables/UserAuthUser';
 
 /*
  * If not building with SSR mode, you can
@@ -31,6 +32,28 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(
       process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE
     ),
+  });
+
+  Router.beforeEach((to) => {
+    const { isLoggedIn } = useAuthUser();
+
+    // se for uma requisição de recuperação de senha, manda para a rota de resete-password
+    if (
+      to.hash.includes('type=recovery') && // requisitando modificação de algo (senha)
+      to.name !== 'reset-password' // verifica se o nome da rota é diferente de reset-passord (ainda n tá na rota correta)
+    ) {
+      const accessToken = to.hash.split('&')[0]; // access token da url, coleta o primeiro parâmetro da url, que separada por & é o access token
+      const token = accessToken.replace('#access_token=', ''); // coleta o token somente
+      return { name: 'reset-password', query: { token } }; // manda para a rota de reset-password, adicionando o token na query
+    }
+
+    if (
+      !isLoggedIn() && // se não estiver logado
+      to.meta.requiresAuth && // devera ser criado em todas as rotas que deverão ser seguras (valida a securidade da rota no arquivo de rotas [routes.js])
+      !Object.keys(to.query).includes('fromEmail') // verifica se na query da rota tem incluso o 'fromEmail'
+    ) {
+      return { name: 'login' };
+    }
   });
 
   return Router;

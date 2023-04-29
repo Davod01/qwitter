@@ -5,8 +5,7 @@
       label="Label"
       class="q-pa-md"
       counter maxlength="255"
-      autogrow
-     :dense="dense">
+      autogrow>
         <template v-slot:before>
           <q-avatar>
             <img src="https://cdn.quasar.dev/img/avatar5.jpg">
@@ -178,10 +177,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+// import { supabase } from 'src/lib/supabaseClient'
+import { ref } from 'vue'
 
 const text = ref<string>('')
-const dense = ref<boolean>(false)
 </script>
 
 <style lang="scss">

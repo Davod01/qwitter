@@ -12,7 +12,7 @@
           size="sm" 
           color="primary"/>
         </q-toolbar-title>
-
+        <q-btn v-if="isLoggedIn()" push color="white" text-color="primary" label="Logout" @click="handleLoguot()"/>
       </q-toolbar>
     </q-header>
 
@@ -110,13 +110,31 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import useAuthUser from 'src/composables/UserAuthUser';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const { logout, isLoggedIn } = useAuthUser();
 const leftDrawerOpen = ref<boolean>(false)
 const text = ref<string>('')
 
 const toggleLeftDrawer = ()=> {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
+
+const handleLoguot = async ()=> {
+  try 
+  {
+    await logout();
+    router.push({name: 'Login'})
+  } 
+  catch (error) 
+  {
+    console.log(error);
+  }
+}
+
+console.log(isLoggedIn());
 
 </script>
 
