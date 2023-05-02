@@ -63,7 +63,10 @@ module.exports = configure(function (ctx) {
       // transpile: false,
       // publicPath: '/',
       // env: envparser()
-
+      env: {
+        SUPABASE_URL: process.env.SUPABASE_URL,
+        SUPABASE_KEY: process.env.SUPABASE_KEY,
+      },
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).
       // Applies only if "transpile" is set to true.
@@ -107,7 +110,12 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: [
+        'Notify'
+      ],
+      config: {
+        notify: { /* look at QuasarConfOptions from the API card */ }
+      }
     },
 
     // animations: 'all', // --- includes all animations

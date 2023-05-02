@@ -1,3 +1,20 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useUserStore } from 'src/stores/userStore'
+
+const userStore = useUserStore()
+const mobileData = ref<boolean>(false)
+const leftDrawerOpen = ref<boolean>(false)
+const text = ref<string>('')
+
+const toggleLeftDrawer = ()=> {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+</script>
+
+
+
 <template>
   <q-layout view="lHr lpR fFf">
 
@@ -12,7 +29,41 @@
           size="sm" 
           color="primary"/>
         </q-toolbar-title>
-        <q-btn v-if="isLoggedIn()" push color="white" text-color="primary" label="Logout" @click="handleLoguot()"/>
+
+
+        <q-btn-dropdown
+          class="glossy"
+          color="primary"
+          :label="userStore.userProfile?.name"
+        >
+          <div class="row no-wrap q-pa-md">
+            <div class="column">
+              <div class="text-h6 q-mb-md">Settings</div>
+              <q-toggle v-model="mobileData" label="Use Mobile Data" />
+              <q-toggle v-model="mobileData" label="Bluetooth" />
+            </div>
+
+            <q-separator vertical inset class="q-mx-lg" />
+
+            <div class="column items-center">
+              <q-avatar size="72px">
+                <img :src="userStore.userProfile?.avatar_url">
+              </q-avatar>
+
+              <div class="text-subtitle1 q-mt-md q-mb-xs">{{ userStore.userProfile?.username }}</div>
+
+              <q-btn
+                color="primary"
+                label="Logout"
+                push
+                size="sm"
+                v-close-popup
+                @click="userStore.Logout()"
+              />
+            </div>
+          </div>
+        </q-btn-dropdown>
+
       </q-toolbar>
     </q-header>
 
@@ -108,35 +159,7 @@
   </q-layout>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import useAuthUser from 'src/composables/UserAuthUser';
-import { useRouter } from 'vue-router';
 
-const router = useRouter();
-const { logout, isLoggedIn } = useAuthUser();
-const leftDrawerOpen = ref<boolean>(false)
-const text = ref<string>('')
-
-const toggleLeftDrawer = ()=> {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
-
-const handleLoguot = async ()=> {
-  try 
-  {
-    await logout();
-    router.push({name: 'Login'})
-  } 
-  catch (error) 
-  {
-    console.log(error);
-  }
-}
-
-console.log(isLoggedIn());
-
-</script>
 
 <style lang="scss">
 .header-icon {

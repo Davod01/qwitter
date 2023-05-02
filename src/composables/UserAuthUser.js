@@ -10,6 +10,7 @@ const user = ref(null);
 export default function useAuthUser() {
 
   const { supabase } = useSupabase();
+  const user_id = user.value?.id
 
   /**
   * Login with email and password
@@ -19,6 +20,13 @@ export default function useAuthUser() {
     if (error) throw error;
     return user;
   };
+
+  const GetProfile = async ()=> {
+    const { data, error} = await supabase.from('profiles').select('*')
+      .eq('id', user_id)
+    if (error) throw error;
+    return data
+  }
 
   /**
   * Login with google, github, etc
@@ -101,6 +109,7 @@ export default function useAuthUser() {
     register,
     update,
     sendPasswordResetEmail,
-    resetPassword
+    resetPassword,
+    GetProfile // new edition
   };
 }

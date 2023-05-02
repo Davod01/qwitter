@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import useAuthUser from 'src/composables/UserAuthUser'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 
-const { replace } = useRouter()
+// const { replace } = useRouter()
 const { register } = useAuthUser()
 
 const form = ref<{
@@ -18,7 +18,7 @@ const handleRegister = async ()=> {
   try 
   {
     await register(form.value);
-    replace({name: 'Login'})
+    // replace({name: 'Login'})
   } 
   catch (error) {
     console.log(error);

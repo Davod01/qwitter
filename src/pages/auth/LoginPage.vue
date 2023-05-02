@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import useAuthUser from 'src/composables/UserAuthUser'
-import { useRouter } from 'vue-router'
+import { useUserStore } from 'src/stores/userStore'
 
-const { replace } = useRouter()
-const { login } = useAuthUser()
+const userStore = useUserStore()
 
 const form = ref<{
   email: string,
@@ -14,23 +12,15 @@ const form = ref<{
   password: ''
 })
 
-const handleLogin = async () => {
-  try 
-  {
-    await login(form.value);
-    replace({name: 'Home'})
-  } 
-  catch (error) {
-    console.log(error);
-  }
-}
-
 const formNotEmpty = computed<boolean>( () => {
   if (form.value.email.length > 6 && form.value.password.length >= 6) return false
 
   return true
 })
+
 </script>
+
+
 
 <template>
   <div class="column">
@@ -41,7 +31,7 @@ const formNotEmpty = computed<boolean>( () => {
       <q-card class="q-pa-lg shadow-1 round-b">
         <q-card-section>
           <q-form class="q-gutter-md text-center"
-          @submit="handleLogin">
+          @submit="userStore.Login(form.email, form.password)">
 
             <q-input 
             rounded 

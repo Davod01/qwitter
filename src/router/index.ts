@@ -6,7 +6,7 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
-import useAuthUser from 'src/composables/UserAuthUser';
+import { useUserStore } from 'src/stores/userStore';
 
 /*
  * If not building with SSR mode, you can
@@ -34,8 +34,8 @@ export default route(function (/* { store, ssrContext } */) {
     ),
   });
 
-  Router.beforeEach((to) => {
-    const { isLoggedIn } = useAuthUser();
+  Router.beforeEach((to,from,next) => {
+    const userStore = useUserStore();
 
     // se for uma requisição de recuperação de senha, manda para a rota de resete-password
     if (
@@ -47,13 +47,30 @@ export default route(function (/* { store, ssrContext } */) {
       return { name: 'reset-password', query: { token } }; // manda para a rota de reset-password, adicionando o token na query
     }
 
-    if (
-      !isLoggedIn() && // se não estiver logado
-      to.meta.requiresAuth && // devera ser criado em todas as rotas que deverão ser seguras (valida a securidade da rota no arquivo de rotas [routes.js])
-      !Object.keys(to.query).includes('fromEmail') // verifica se na query da rota tem incluso o 'fromEmail'
-    ) {
-      return { name: 'login' };
+    // if (
+    //   !userStore.isLoggedIn && // se não estiver logado
+    //   to.meta.requiresAuth && // devera ser criado em todas as rotas que deverão ser seguras (valida a securidade da rota no arquivo de rotas [routes.js])
+    //   !Object.keys(to.query).includes('fromEmail') // verifica se na query da rota tem incluso o 'fromEmail'
+    // ) {
+    //   return { name: 'Login' };
+    // }
+    if (userStore.isLoggedIn) {
+      if (to.meta.requiresAuth) {
+        next()
+      }
+      else {
+        next({ name: 'Home' })
+      }
     }
+    else {
+      if (!to.meta.requiresAuth) {
+        next()
+      }
+      else {
+        next({ name: 'Login' })
+      }
+    }
+    
   });
 
   return Router;
