@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import useSupabase from 'src/boot/supabase';
 import { User } from '@supabase/supabase-js'
 import { TProfile } from 'src/types/QwittsType'
+// import quasarIcon from 'src/assets/quasar-logo-vertical'
+const quasarIcon = require('src/assets/quasar-logo-vertical.svg')
 
 const { supabase } = useSupabase()
 
@@ -13,7 +15,8 @@ export const useUserStore = defineStore('userStore', {
   }),
   getters: {
     isLoggedIn: (state)=> !!state.authUser,
-    getAvatarUrl: (state)=> !!state.userProfile?.avatar_url
+    getAvatarUrl: (state)=> !!state.userProfile?.avatar_url ?
+      state.userProfile.avatar_url : quasarIcon
   },
   actions: {
     async Login(email: string, password: string) {

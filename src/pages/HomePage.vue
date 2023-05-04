@@ -124,7 +124,7 @@ handleQwitt()
         </template>
       </q-input>
 
-      <q-separator class="q-mt-md divider" size="10px" color="grey-2"/>
+      <q-separator class="q-mt-md divider" size="10px"/>
 
       <div class="relative-position" style="flex-grow: 1;">
         <q-scroll-area class="absolute fullscreen">
