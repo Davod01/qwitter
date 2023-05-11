@@ -8,9 +8,11 @@ const { register } = useAuthUser()
 
 const form = ref<{
   email: string,
+  username: string,
   password: string
 }>({
   email: '',
+  username: '',
   password: ''
 })
 
@@ -26,7 +28,11 @@ const handleRegister = async ()=> {
 }
 
 const formNotEmpty = computed<boolean>( () => {
-  if (form.value.email.length > 6 && form.value.password.length >= 6) return false
+  if (
+    form.value.email.length > 6 && 
+    form.value.username.length > 3 && 
+    form.value.password.length >= 6
+  ) return false
 
   return true
 })
@@ -52,10 +58,30 @@ const formNotEmpty = computed<boolean>( () => {
             label="email" 
             counter>
               <template v-slot:prepend>
-                <q-icon name="place" />
+                <q-icon name="mail" />
               </template>
               <template v-slot:append>
                 <q-icon v-if="form.email" name="close" @click="form.email = ''" class="cursor-pointer" />
+              </template>
+
+              <template v-slot:hint>
+                Field hint
+              </template>
+            </q-input>
+
+            <q-input 
+            rounded 
+            standout 
+            bottom-slots 
+            v-model="form.username" 
+            type="text"  
+            label="User Name" 
+            counter>
+              <template v-slot:prepend>
+                <q-icon name="account_circle" />
+              </template>
+              <template v-slot:append>
+                <q-icon v-if="form.username" name="close" @click="form.username = ''" class="cursor-pointer" />
               </template>
 
               <template v-slot:hint>
@@ -72,7 +98,7 @@ const formNotEmpty = computed<boolean>( () => {
             label="password" 
             counter>
               <template v-slot:prepend>
-                <q-icon name="place" />
+                <q-icon name="key" />
               </template>
               <template v-slot:append>
                 <q-icon v-if="form.password" name="close" @click="form.password = ''" class="cursor-pointer" />

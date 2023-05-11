@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useTimeAgo } from '@vueuse/core'
 import useSupabase from 'src/boot/supabase'
-import { ref } from 'vue'
-import { TQwitt } from 'src/types/QwittsType'
+import { ref, reactive } from 'vue'
+import { TQwitt, TProfile, Like} from 'src/types/QwittsType'
 import { useUserStore } from 'src/stores/userStore'
 import { useQuasar } from 'quasar'
 
@@ -10,16 +10,17 @@ const $q = useQuasar()
 const userStore = useUserStore()
 const text = ref<string>('')
 const { supabase } = useSupabase()
-const qwitts: TQwitt[] | undefined = []
+const qwitts= reactive<TQwitt[]>([])
 
 
 const handleQwitt = async ()=> {
   try{
-    const { data, error} = await supabase.from('qwitt')
-      .select('id, content, created_at, profiles(*)')
-      .order('created_at',{ascending: false})
+    const { data , error} = await supabase.from('qwitts')
+      .select('id, qwitt, created_at, profiles!profile_id(*),likes(*), count:likes(count)')
+      .eq('likes.profile_id', userStore.authUser?.id.toString())
     if(error) throw error
     qwitts.push(...data as TQwitt[])
+    
   }
   catch (error){
     if (error instanceof Error){
@@ -41,8 +42,13 @@ const handleQwitt = async ()=> {
     }
   }
 }
+
 const insertToQwitts = async ()=> {
-  const message = text.value
+  const newQwitt:TQwitt = {
+    qwitt: text.value,
+    profile_id: userStore.userProfile?.id,
+    profiles: userStore.userProfile as TProfile
+  }
   text.value = ''
   const notify = $q.notify({
     group: false,
@@ -52,13 +58,14 @@ const insertToQwitts = async ()=> {
   })
   notify
   try{
-    const { error } = await supabase
-      .from('qwitt')
-      .insert({ content: message, profile_id: userStore.authUser?.id })
+    const { data, error } = await supabase
+      .from('qwitts')
+      .insert({ qwitt: newQwitt.qwitt, profile_id: newQwitt.profile_id }).select()
     if(error) throw error
-    text.value = ''
-    qwitts.splice(0)
-    handleQwitt()
+    newQwitt.id = data[0].id
+    newQwitt.created_at = data[0].created_at
+    
+    qwitts.unshift(newQwitt)
     notify({
       icon: 'done',
       spinner: false,
@@ -86,6 +93,51 @@ const insertToQwitts = async ()=> {
         spinner: false,
         timeout: 2500
       })
+    }
+  }
+}
+
+
+const likeButton = async (qwitt: TQwitt) => {
+  const likedQwitt: Like = {
+    profile_id: userStore.authUser?.id as string,
+    qwitt_id: qwitt.id as number
+  }
+  if(qwitt.likes?.length){
+    try {
+      const { error } = await supabase
+        .from('likes')
+        .delete()
+        .eq('profile_id', likedQwitt.profile_id)
+        .eq('qwitt_id', likedQwitt.qwitt_id)
+      if(error) throw error
+      qwitt.likes?.splice(0)
+      if(qwitt.count?.length && qwitt.count[0].count) {
+        qwitt.count[0].count--
+      }
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+  else {
+    try 
+    {
+      const { error } = await supabase
+      .from('likes')
+      .insert([
+        likedQwitt
+      ])
+      if(error) throw error
+      qwitt.likes?.push(likedQwitt)
+      if(qwitt.count?.length) {
+        if (qwitt.count[0].count) qwitt.count[0].count++
+        else qwitt.count[0].count = 1
+      }
+    }
+    catch (error) 
+    {
+      console.log(error)
     }
 
   }
@@ -129,7 +181,7 @@ handleQwitt()
       <div class="relative-position" style="flex-grow: 1;">
         <q-scroll-area class="absolute fullscreen">
           <q-list>
-            <q-item v-for="qwitt in qwitts" :key="qwitt.id" class="q-py-md">
+            <q-item v-for="(qwitt, index) in qwitts" :key="index" class="q-py-md">
               <q-item-section top avatar>
                 <q-avatar>
                   <img :src="qwitt.profiles?.avatar_url">
@@ -138,23 +190,27 @@ handleQwitt()
 
               <q-item-section>
                 <q-item-label class="text-subtitle1">
-                  <strong >{{ qwitt.profiles.name   }}</strong>
+                  <strong >{{ qwitt.profiles?.name   }}</strong>
                   <span class="text-grey-5 q-px-sm text-caption">
-                    {{ qwitt.profiles.username }}
+                    {{ qwitt.profiles?.username }}
                   </span>
                 </q-item-label>
                 <q-item-label class=" text-body1 text-grey-8" lines="6">
-                  {{ qwitt.content }}
+                  {{ qwitt.qwitt }}
                 </q-item-label>
                 <div class="row justify-between q-mt-sm qwitt-icons">
                   <q-btn flat round color="grey" size="sm" icon="chat_bubble" />
-                  <q-btn flat round color="grey" size="sm" icon="favorite" />
-                  <q-btn flat round color="grey" size="sm" icon="delete" />
+                  <q-btn flat round :color="!!qwitt.likes?.length ? 'red' : 'grey'" size="sm" icon="favorite" @click="likeButton(qwitt)" />
+
+                  <div class="row flex-center">
+                    <span class="text-overline text-weight-light">{{ qwitt.count?.length ? qwitt.count[0].count : '' }}</span>
+                    <q-btn flat round color="grey" size="sm" icon="signal_cellular_alt" />
+                  </div>
                 </div>
               </q-item-section>
 
               <q-item-section side top>
-                <q-item-label caption>{{ useTimeAgo(qwitt.created_at) }}</q-item-label>
+                <q-item-label caption>{{ qwitt.created_at ? useTimeAgo(qwitt.created_at) : '' }}</q-item-label>
               </q-item-section>
             </q-item>
             <q-separator inset />

@@ -1,10 +1,13 @@
 export type TQwitt = {
-  id: number,
-  content: string,
-  created_at: Date,
+  id?: number,
+  qwitt: string,
+  created_at?: Date,
   updated_at?: Date,
-  profile_id?: number
-  profiles: TProfile
+  profile_id?: string,
+  qwitt_id?: number | null,
+  profiles?: TProfile,
+  likes?: Like[],
+  count?: count[]
 }
 
 export type TProfile = {
@@ -16,4 +19,22 @@ export type TProfile = {
   website?: string,
   created_at?: Date,
   updated_at?: Date
+}
+
+export type Like = {
+  profile_id: string,
+  qwitt_id: number,
+  created_at?: Date,
+}
+
+export type comment = {
+  id: number,
+  content: string,
+  profile_id: string,
+  qwitt_id: number,
+  created_at: Date
+}
+
+export type count = {
+  count?: number
 }

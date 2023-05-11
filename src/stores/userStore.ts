@@ -37,12 +37,14 @@ export const useUserStore = defineStore('userStore', {
       try{
         const { data, error } = await supabase.auth.getSession()
         const user = data.session?.user
+
         if(error) throw error
-        if (!this.authUser) {
-          this.authUser = user as User | null
+        if(data.session){
+          this.authUser = user as User
           this.getProfile()
           this.router.replace({name: 'Home'})
         }
+        
       }
       catch(error){
         console.log(error)
@@ -85,6 +87,7 @@ export const useUserStore = defineStore('userStore', {
           }
         )
         if (error) throw error;
+        console.log(data)
         this.authUser = data.user
         this.getProfile()
         this.router.replace({name: 'Home'})
