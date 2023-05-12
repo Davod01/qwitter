@@ -40,7 +40,7 @@ watch(DarkMode, (newVal) => {
         <q-btn-dropdown
           class="glossy"
           color="secondary"
-          :label="userStore.userProfile?.name"
+          :label="userStore.userProfile?.name ? userStore.userProfile?.name: userStore.userProfile?.username"
         >
           <div class="row no-wrap q-pa-md">
             <div class="column">

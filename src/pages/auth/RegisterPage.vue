@@ -1,26 +1,26 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import useAuthUser from 'src/composables/UserAuthUser'
-// import { useRouter } from 'vue-router'
+import { useUserStore } from 'src/stores/userStore'
 
 // const { replace } = useRouter()
-const { register } = useAuthUser()
+const { Register } = useUserStore()
+const avatar = 'https://dxmizvfzkojoyelrysft.supabase.co/storage/v1/object/sign/avatars/user_profile.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdmF0YXJzL3VzZXJfcHJvZmlsZS5wbmciLCJpYXQiOjE2ODM4MjM2OTEsImV4cCI6MTcxNTM1OTY5MX0.FKUokYDwxXOAvwae4qUOWF4-WmG39dhIQ7EXV1ZK7DE&t=2023-05-11T16%3A48%3A10.628Z'
 
 const form = ref<{
   email: string,
-  username: string,
-  password: string
+  password: string,
+  username: string
+
 }>({
   email: '',
-  username: '',
-  password: ''
+  password: '',
+  username: ''
 })
 
-const handleRegister = async ()=> {
+const handleRegister = ()=> {
   try 
   {
-    await register(form.value);
-    // replace({name: 'Login'})
+    Register(form.value.email, form.value.password, form.value.username,avatar)
   } 
   catch (error) {
     console.log(error);

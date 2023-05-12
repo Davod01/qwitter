@@ -18,6 +18,7 @@ const handleQwitt = async ()=> {
     const { data , error} = await supabase.from('qwitts')
       .select('id, qwitt, created_at, profiles!profile_id(*),likes(*), count:likes(count)')
       .eq('likes.profile_id', userStore.authUser?.id.toString())
+      .order('created_at', { ascending: false })
     if(error) throw error
     qwitts.push(...data as TQwitt[])
     
@@ -47,7 +48,8 @@ const insertToQwitts = async ()=> {
   const newQwitt:TQwitt = {
     qwitt: text.value,
     profile_id: userStore.userProfile?.id,
-    profiles: userStore.userProfile as TProfile
+    profiles: userStore.userProfile as TProfile,
+    likes: []
   }
   text.value = ''
   const notify = $q.notify({
@@ -64,6 +66,7 @@ const insertToQwitts = async ()=> {
     if(error) throw error
     newQwitt.id = data[0].id
     newQwitt.created_at = data[0].created_at
+    console.log(qwitts)
     
     qwitts.unshift(newQwitt)
     notify({

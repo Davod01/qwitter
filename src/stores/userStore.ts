@@ -75,25 +75,26 @@ export const useUserStore = defineStore('userStore', {
       }
     },
 
-    async Register(email:string, password:string, ...meta:string[]) {
+    async Register(email:string, password:string, username:string, avatar:string) {
       try{
-        const { data, error } = await supabase.auth.signUp(
-          {
-            email,
-            password,
-            options: {
-              data: meta,
+        console.log(avatar)
+        const { data, error } = await supabase.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: {
+              username: username,
+              avatar_url: avatar
             }
           }
-        )
-        if (error) throw error;
-        console.log(data)
+        })
+        if (error) throw error
         this.authUser = data.user
         this.getProfile()
         this.router.replace({name: 'Home'})
       }
       catch(error){
-        console.log(error);
+        console.log(error)
       }
     }
   }
