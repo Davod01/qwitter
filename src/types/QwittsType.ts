@@ -24,7 +24,7 @@ export type TProfile = {
 export type Like = {
   profile_id: string,
   qwitt_id: number,
-  created_at?: Date,
+  created_at?: Date
 }
 
 export type comment = {

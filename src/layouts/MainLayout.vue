@@ -24,7 +24,7 @@ watch(DarkMode, (newVal) => {
 <template>
   <q-layout view="lHr lpR fFf">
 
-    <q-header elevated class="bg-info text-black">
+    <q-header elevated class="bg-primary text-black">
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
@@ -33,7 +33,7 @@ watch(DarkMode, (newVal) => {
           <q-icon name="flutter_dash" 
           class="lt-md header-icon" 
           size="sm" 
-          color="primary"/>
+          color="black"/>
         </q-toolbar-title>
 
 
@@ -82,7 +82,7 @@ watch(DarkMode, (newVal) => {
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :width="250" bordered>
+    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :width="250" bordered class="z-max">
       <q-icon name="flutter_dash" class="q-pa-sm" size="2rem" color="primary"/>
 
       <div class="q-pa-md" style="max-width: 350px">
@@ -94,7 +94,7 @@ watch(DarkMode, (newVal) => {
             <q-item-section class="text-weight-bold">Home</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple>
+          <!-- <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="tag" size="md" />
             </q-item-section>
@@ -106,7 +106,7 @@ watch(DarkMode, (newVal) => {
               <q-icon name="notifications" size="md" />
             </q-item-section>
             <q-item-section class="text-weight-bold">notifications</q-item-section>
-          </q-item>
+          </q-item> -->
 
           <q-item to="/about" clickable v-ripple>
             <q-item-section avatar>

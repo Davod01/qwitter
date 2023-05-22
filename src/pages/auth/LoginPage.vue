@@ -14,7 +14,6 @@ const form = ref<{
 
 const formNotEmpty = computed<boolean>( () => {
   if (form.value.email.length > 6 && form.value.password.length >= 6) return false
-
   return true
 })
 

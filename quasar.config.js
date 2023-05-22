@@ -34,7 +34,7 @@ module.exports = configure(function (ctx) {
     boot: [
       'i18n',
       'axios',
-      'supabase',
+      'supabase'
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
@@ -63,10 +63,7 @@ module.exports = configure(function (ctx) {
       // transpile: false,
       // publicPath: '/',
       // env: envparser()
-      env: {
-        SUPABASE_URL: process.env.SUPABASE_URL,
-        SUPABASE_KEY: process.env.SUPABASE_KEY,
-      },
+      env: require('dotenv').config().parsed
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).
       // Applies only if "transpile" is set to true.

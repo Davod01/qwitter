@@ -1,1 +1,16 @@
 // app global css in SCSS form
+// .q-drawer--on-top {
+//   z-index: 9999;
+// }
+
+// .q-dialog__backdrop {
+//   background: rgba(0, 0, 0, 0.1);
+// }
+
+// .q-drawer__backdrop {
+//   z-index: 9998 !important
+// }
+
+.fullscreen {
+  z-index: 1900;
+}
